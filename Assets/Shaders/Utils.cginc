@@ -4,6 +4,12 @@
 #define HALFPI 1.5707963267948966192313216916398
 #define HALF3PI 4.7123889803846898576939650749194
 
+// rotation matrix
+void rotation2D (in out float2 p, float a) {
+  float c=cos(a),s=sin(a);
+  p = mul(float2x2(c,-s,s,c), p);
+}
+
 float colorDistance (float4 a, float4 b)
 {
   return (abs(a.r - b.r) + abs(a.g - b.g) + abs(a.b - b.b)) / 3.0;

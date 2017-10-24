@@ -37,15 +37,10 @@
 				float4 position : SV_POSITION;
 			};
 
+			// uniforms
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 			float _Height, _Speed, _Scale, _BounceRange;
-
-			// rotation matrix
-			float2x2 rot (float a) {
-				float c=cos(a),s=sin(a);
-				return float2x2(c,-s,s,c);
-			}
 			
 			v2f vert (appdata v)
 			{
@@ -90,7 +85,7 @@
 				
 				// uv are used to scale quad in screen space
 				float2 uv = v.uv;
-				uv = mul(rot(_Time.y+rng*PI*20.),uv);
+				rotation2D(uv, _Time.y+rng*PI*20.);
 				uv.x *= _ScreenParams.y/_ScreenParams.x;
 				// random rotation with time
 

@@ -24,24 +24,25 @@ Shader "Unlit/Particles"
 			#include "UnityCG.cginc"
 			#include "Utils.cginc"
 
-			struct appdata
+			struct attribute
 			{
-				float4 vertex : POSITION;
+				float4 position : POSITION;
 				float2 uv : TEXCOORD0;
 			};
 
-			struct v2f
+			struct varying
 			{
+				float4 position : SV_POSITION;
 				float2 uv : TEXCOORD0;
-				float4 vertex : SV_POSITION;
-				float3 front : TEXCOORD1;
+				float3 normal : NORMAL;
+				float3 view : TEXCOORD2;
 			};
 
-			sampler2D _MainTex;
-			float4 _MainTex_ST;
-			float3 _TargetTornado;
-			float2 _Scale;
-			float _Height, _Speed, _Tornado;
+			uniform sampler2D _MainTex;
+			uniform float4 _MainTex_ST;
+			uniform float3 _TargetTornado;
+			uniform float2 _Scale;
+			uniform float _Height, _Speed, _Tornado;
 
 			float2x2 rot (float a) {
 				float c=cos(a),s=sin(a);
@@ -57,41 +58,43 @@ Shader "Unlit/Particles"
 				return p;
 			}
 			
-			v2f vert (appdata v)
+			varying vert (attribute v)
 			{
-				v2f o;
+				varying o;
 
-				float4 vertex = v.vertex;
+				float4 position = v.position;
+				position = mul(UNITY_MATRIX_M, position);
 
-				float3 seed = vertex;
+				float3 seed = position;
 				float rng = rand(seed.xz);
 				float ratio = fmod(abs(_Time.y * _Speed + rng), 1.);
 
 				float2 scale = _Scale * (.5+.5*rng);
 
 				float unit = 0.01;
-				float3 next = displace(vertex.xyz, ratio+unit);
-				float3 prev = displace(vertex.xyz, ratio-unit);
+				float3 next = displace(position.xyz, ratio+unit);
+				float3 prev = displace(position.xyz, ratio-unit);
 				float3 front = normalize(next-prev);
-				float3 right = cross(front, normalize(vertex));
+				float3 right = cross(front, normalize(position));
 
 				float2 uv = v.uv;
-				vertex.xyz = displace(vertex.xyz, ratio);
-				vertex.xyz += front * uv.y * scale.x + right * uv.x * scale.y;
+				position.xyz = displace(position.xyz, ratio);
+				position.xyz += front * uv.y * scale.x + right * uv.x * scale.y;
 
-				o.vertex = UnityObjectToClipPos(vertex);
-
-				o.front = front;
+				o.view = normalize(_WorldSpaceCameraPos - position);
+				o.position = mul(UNITY_MATRIX_VP, position);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+				o.normal = front;
 				return o;
 			}
 			
-			fixed4 frag (v2f i) : SV_Target
+			fixed4 frag (varying i) : SV_Target
 			{
 				if (length(i.uv) > 1.) discard;
-				fixed4 col = tex2D(_MainTex, i.uv);
-				col.rgb = i.front*.5+.5;
-				return col;
+				float3 color = float3(1,1,1);
+				// color *= dot(i.normal, i.view)*.5+.5;
+				color *= i.normal*.5+.5;
+				return fixed4(color,1);
 			}
 			ENDCG
 		}

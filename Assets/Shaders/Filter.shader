@@ -1,6 +1,6 @@
 ﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-Shader "Filter/Filter"
+Shader "Filters/Filter"
 {
 	Properties
 	{
@@ -12,43 +12,21 @@ Shader "Filter/Filter"
 	}
 	SubShader
 	{
-		// No culling or depth
 		Cull Off ZWrite Off ZTest Always
 
 		Pass
 		{
 			CGPROGRAM
-			#pragma vertex vert
+			#pragma vertex vert_img
 			#pragma fragment frag
 			
 			#include "UnityCG.cginc"
-
-			struct attribute
-			{
-				float4 vertex : POSITION;
-				float3 normal : NORMAL;
-				float2 uv : TEXCOORD0;
-			};
-
-			struct varying
-			{
-				float2 uv : TEXCOORD0;
-				float4 vertex : SV_POSITION;
-			};
-
-			varying vert (attribute v)
-			{
-				varying o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
-				o.uv = v.uv;
-				return o;
-			}
 			
 			sampler2D _MainTex;
 			float _Scale, _Slider;
 			float3 _Position;
 
-			fixed4 frag (varying i) : SV_Target
+			fixed4 frag (v2f_img i) : SV_Target
 			{
 				float2 uv = i.uv;
 
@@ -66,18 +44,18 @@ Shader "Filter/Filter"
 				// uv.x += sin(uv.y*_Scale + _Time.y)*_Slider;
 
 				// pixel effect
-				uv = floor(uv*_Scale)/_Scale;
+				// uv = floor(uv*_Scale)/_Scale;
 
-				fixed4 col = tex2D(_MainTex, uv);
+				fixed4 color = tex2D(_MainTex, uv);
 
 				// treshold effect
-				// col = floor(col*_Scale)/_Scale;
+				// color = floor(color*_Scale)/_Scale;
 
 				// vignette effect
-				// col.rgb *= sin(uv.x*3.14159);
-				// col.rgb *= sin(uv.y*3.14159);
+				color.rgb *= .75+.25*sin(uv.x*3.14159);
+				color.rgb *= .75+.25*sin(uv.y*3.14159);
 
-				return col;
+				return color;
 			}
 			ENDCG
 		}
