@@ -10,7 +10,7 @@ public class Particles : MonoBehaviour {
 	private int total;
 	private const int verticesMax = 65000;
 
-	void Start ()
+	void Awake ()
 	{
 		GenerateMesh();
 	}
