@@ -14,6 +14,7 @@
 			#pragma fragment frag
 			
 			#include "UnityCG.cginc"
+			#include "Utils.cginc"
 			
 			sampler2D _MainTex;
 			sampler2D _Camera1, _Camera2;
@@ -23,13 +24,19 @@
 			{
 				float2 uv = i.uv;
 
-				// transition effect
+				// transition offsets
 				float offset = tex2D(_MainTex, uv).r;
-				offset += _Blend;
-				// offset = smoothstep(.4,.6,offset);
-				float ratio = offset * sin(_Blend*3.14159);
-				ratio = smoothstep(.2,.8,ratio);
-				fixed4 color = lerp(tex2D(_Camera1, uv), tex2D(_Camera2, uv), ratio);
+				// float offset = rand(pixelize(uv, _ScreenParams.xy/16.));
+				// float offset = rand(pixelize(uv.yy, _ScreenParams.xy/16.));
+				// float offset = uv.x;
+				// float offset = (uv.x + rand(pixelize(uv.yy, _ScreenParams.xy/16.)))/2.;
+
+				// transition effect
+				// float blend = _Blend;
+				float blend = sin(_Time.y)*.5+.5;
+				offset = smoothstep(.4,.6,offset+blend*2.-1.);
+				blend = offset;
+				fixed4 color = lerp(tex2D(_Camera1, uv), tex2D(_Camera2, uv), clamp(blend,0.,1.));
 
 				// vignette effect
 				color.rgb *= .75+.25*sin(uv.x*3.14159);
