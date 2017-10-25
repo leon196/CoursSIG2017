@@ -25,6 +25,7 @@
 				float2 uv = i.uv;
 
 				// transition offsets
+				// float offset = 0.;
 				float offset = tex2D(_MainTex, uv).r;
 				// float offset = rand(pixelize(uv, _ScreenParams.xy/16.));
 				// float offset = rand(pixelize(uv.yy, _ScreenParams.xy/16.));
