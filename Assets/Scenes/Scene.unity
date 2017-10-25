@@ -567,6 +567,7 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: 89b09a14ff900ae45968d8572dc23397, type: 2}
   materialPosition: {fileID: 2100000, guid: d47bd8cad4106a74393ef1b3e865e026, type: 2}
   target: {fileID: 883707326}
+  radius: 50
 --- !u!4 &630754237
 Transform:
   m_ObjectHideFlags: 0

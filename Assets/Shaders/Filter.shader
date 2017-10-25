@@ -25,7 +25,7 @@ Shader "Filters/Filter"
 			#include "UnityCG.cginc"
 			#include "Utils.cginc"
 			
-			sampler2D _MainTex;
+			sampler2D _MainTex, _ShaderPassTexture;
 			float _Scale, _Slider, _CellSize, _Thin;
 			float3 _Position;
 
@@ -72,7 +72,9 @@ Shader "Filters/Filter"
 				color.rgb *= .75+.25*sin(uv.x*3.14159);
 				color.rgb *= .75+.25*sin(uv.y*3.14159);
 
-				return color;
+				// return color;
+
+				return tex2D(_ShaderPassTexture, i.uv);
 			}
 			ENDCG
 		}

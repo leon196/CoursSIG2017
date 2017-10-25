@@ -46,7 +46,9 @@ Shader "Unlit/ParticlesGPU"
 				varying o;
 
 				float4 position = v.position;
+
 				position.xyz = tex2Dlod(_PositionTexture, v.uv2).xyz;
+				
 				position = mul(UNITY_MATRIX_M, position);
 
 				o.view = normalize(_WorldSpaceCameraPos - position);
