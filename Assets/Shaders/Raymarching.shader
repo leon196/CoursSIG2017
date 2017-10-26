@@ -29,6 +29,10 @@
 				return length(p) - r;
 			}
 
+			float sdCylinder (float2 p, float r) {
+				return length(p) - r;
+			}
+
 			float sdBox( float3 p, float3 b )
 			{
 			  float3 d = abs(p) - b;
@@ -43,12 +47,19 @@
 			float map (float3 pos) {
 				// pos.y += .1*noiseIQ(rotateY(pos*5., _Time.y));
 				// pos.y -= .1*noiseIQ(rotateX(pos*10., _Time.y));
+				float cellSize = 4.;
+				rotation2D(pos.xz, pos.y*.1);
+				pos.xz = fmod(abs(pos.xz), cellSize) - cellSize/2.;
 				float box = sdBox(pos, float3(1,1,1));
 				float ground = abs(pos.y) - .1;
 				pos.y -= 2.;
 				pos.x += sin(_Time.y);
 				float sph = sdSphere(pos, 1);
-				return smin(box, sph, .5);
+				float cyl = sdCylinder(pos.xz, .1);
+
+				float scene = smin(box, sph, .5);
+				scene = smin(scene, cyl, .5);
+				return scene;
 			}
 
 			fixed4 frag (v2f_img i) : SV_Target
