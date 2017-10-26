@@ -55,7 +55,8 @@ Shader "Filters/Filter"
 				// uv.x += sin(uv.y*_Scale + _Time.y)*_Slider;
 
 				// pixel effect
-				// uv.y = floor(uv.y*_Scale)/_Scale;
+				float2 size = _ScreenParams/_Scale;
+				uv = round(uv*size)/size;
 
 				// uv.x += sin(uv.y*1000.+_Time.y*10.)*.01;
 
