@@ -67,7 +67,8 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _Scale: 100
+    - _RGB: 2.32
+    - _Scale: 370.2
     - _Slider: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1

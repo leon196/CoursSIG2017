@@ -48,15 +48,14 @@ public class Particles : MonoBehaviour {
 				count = totalVertices;
 			}
 
-			Debug.Log(count);
 			Vector3[] vertices = new Vector3[count];
 			Vector2[] uvs = new Vector2[count];
 			int[] indices = new int[count];
 			int index = 0;
 
 			for (int f = 0; f + dimension - 1 < count; f += dimension) {
-				float x = (float)(quadIndex % width);
-				float y = (float)(quadIndex / width);
+				float x = (float)(quadIndex % width)/(float)width;
+				float y = (float)(quadIndex / width)/(float)height;
 				Vector3 position = new Vector3(x,0,y);
 				++quadIndex;
 				uvs[index+0] = new Vector2(-1f,-1f);
