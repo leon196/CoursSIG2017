@@ -48,8 +48,8 @@
 				// pos.y += .1*noiseIQ(rotateY(pos*5., _Time.y));
 				// pos.y -= .1*noiseIQ(rotateX(pos*10., _Time.y));
 				float cellSize = 4.;
-				rotation2D(pos.xz, pos.y*.1);
-				pos.xz = fmod(abs(pos.xz), cellSize) - cellSize/2.;
+				// rotation2D(pos.xz, pos.y*.1);
+				// pos.xz = fmod(abs(pos.xz), cellSize) - cellSize/2.;
 				float box = sdBox(pos, float3(1,1,1));
 				float ground = abs(pos.y) - .1;
 				pos.y -= 2.;
@@ -60,6 +60,11 @@
 				float scene = smin(box, sph, .5);
 				scene = smin(scene, cyl, .5);
 				return scene;
+			}
+
+			float3 getNormal (float3 pos) {
+				float2 e = float2(0.001,0);
+				return normalize(float3(map(pos+e.xyy)-map(pos-e.xyy),map(pos+e.yxy)-map(pos-e.yxy),map(pos+e.yyx)-map(pos-e.yyx)));
 			}
 
 			fixed4 frag (v2f_img i) : SV_Target
@@ -89,7 +94,8 @@
 					dist = max(_MinDist, dist);
 					pos += ray * dist;
 				}
-
+				float3 normal = getNormal(pos);
+				color = normal *.5 + .5;
 				color *= shade;
 
 				return fixed4(color, 1.);
